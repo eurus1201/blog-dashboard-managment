@@ -29,7 +29,11 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <button type="submit" class="btn btn-primary btn-block mt-4">
+                  <button
+                    @click="login"
+                    type="submit"
+                    class="btn btn-primary btn-block mt-4"
+                  >
                     Login
                   </button>
                 </div>
@@ -37,7 +41,8 @@
             </form>
             <div class="mt-3 text-start">
               <p>
-                Don’t have account? <span class="font-weight-bold">Register Now</span>
+                Don’t have account?
+                <span class="font-weight-bold">Register Now</span>
               </p>
             </div>
           </div>
@@ -61,18 +66,23 @@
   }
 }
 </style>
+
 <script>
-export default {
-  data() {
+import { defineComponent } from "vue";
+import { useAuthStore } from "../stores/auth";
+
+export default defineComponent({
+  setup() {
+    const authStore = useAuthStore();
+
+    const login = () => {
+      // Your login logic here
+      authStore.login();
+    };
+
     return {
-      email: "",
-      password: "",
+      login,
     };
   },
-  methods: {
-    handleSubmit() {
-      // Handle login logic here
-    },
-  },
-};
+});
 </script>
