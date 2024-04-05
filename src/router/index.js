@@ -4,6 +4,7 @@ import Login from "../views/Login.vue";
 import AllPosts from "@/views/AllPosts.vue";
 import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout.vue";
 import PublicLayout from "@/components/layout/PublicLayout.vue";
+import NewPost from "@/views/NewPost.vue";
 
 const routes = [
   {
@@ -29,6 +30,10 @@ const routes = [
       {
         path: "/allPosts",
         component: AllPosts,
+      },
+      {
+        path: "/newPost",
+        component: NewPost,
       },
     ],
   },

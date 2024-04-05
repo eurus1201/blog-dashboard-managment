@@ -9,7 +9,7 @@
       >
         <p class="post">Post</p>
         <router-link
-          class="nav-link active"
+          class="nav-link "
           :class="{ active: isActive('/allPosts') }"
           to="/allPosts"
           >All Articles</router-link

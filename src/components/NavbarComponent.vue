@@ -6,7 +6,7 @@
       <p class="mb-0">Welcome {{ username }}</p>
     </div>
     <div>
-      <button class="btn btn-danger">Logout</button>
+      <button class="btn btn-outline-primary">Logout</button>
     </div>
   </div>
 </nav>
