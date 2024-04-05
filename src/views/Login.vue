@@ -70,14 +70,16 @@
 <script>
 import { defineComponent } from "vue";
 import { useAuthStore } from "../stores/auth";
+import  router  from "../router/index";
 
 export default defineComponent({
   setup() {
     const authStore = useAuthStore();
 
     const login = () => {
-      // Your login logic here
+      //  login logic here
       authStore.login();
+      router.push("/all_posts");
     };
 
     return {

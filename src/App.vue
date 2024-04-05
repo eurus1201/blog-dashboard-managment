@@ -59,4 +59,3 @@ export default defineComponent({
 <style>
 /* Add any custom styles here */
 </style>
-./stores/auth./stores/auth
