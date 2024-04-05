@@ -2,24 +2,36 @@ import { createRouter, createWebHistory } from "vue-router";
 import Register from "../views/Register.vue";
 import Login from "../views/Login.vue";
 import AllPosts from "@/views/AllPosts.vue";
+import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout.vue";
+import PublicLayout from "@/components/layout/PublicLayout.vue";
 
 const routes = [
   {
-    path: "/register",
-    name: "Register",
-    component: Register,
-  },
-  {
     path: "/",
-    name: "Login",
-    component: Login,
+    component: PublicLayout,
+    children: [
+      {
+        path: "/",
+        // name: "Login",
+        component: Login,
+      },
+      {
+        path: "/register",
+        // name: "Register",
+        component: Register,
+      },
+    ],
   },
   {
-    path: "/allPosts",
-    name: "allPosts",
-    component: AllPosts,
+    path: "/app",
+    component: AuthenticatedLayout,
+    children: [
+      {
+        path: "/allPosts",
+        component: AllPosts,
+      },
+    ],
   },
-
 ];
 
 const router = createRouter({

@@ -79,7 +79,7 @@ export default defineComponent({
     const login = () => {
       //  login logic here
       authStore.login();
-      router.push("/all_posts");
+      router.push("/allPosts");
     };
 
     return {

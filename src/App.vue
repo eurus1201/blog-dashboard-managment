@@ -1,51 +1,29 @@
 <template>
   <div id="app">
+    <!-- Conditional rendering based on authentication status -->
     <template v-if="authStore.isLoggedIn">
-      <!-- Navbar -->
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-          <a class="navbar-brand" href="#">Your App</a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <router-link to="/" class="nav-link">Home</router-link>
-              </li>
-              <!-- Add more navbar items as needed -->
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      <!-- Header -->
-      <header class="jumbotron text-center">
-        <h1>Welcome to Your App</h1>
-        <!-- You can add more content to the header as needed -->
-      </header>
+      <!-- Render the authenticated layout -->
+      <AuthenticatedLayout />
     </template>
-
-    <!-- Router View -->
-    <router-view></router-view>
-    <!-- This is where the components for each route will be rendered -->
+    <template v-else>
+      <!-- Render the public layout -->
+      <PublicLayout />
+    </template>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 import { useAuthStore } from "./stores/auth";
+import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout.vue";
+import PublicLayout from "@/components/layout/PublicLayout.vue"; 
 
 export default defineComponent({
   name: "App",
+  components: {
+    AuthenticatedLayout,
+    PublicLayout
+  },
   setup() {
     const authStore = useAuthStore();
 
