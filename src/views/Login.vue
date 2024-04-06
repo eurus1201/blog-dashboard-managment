@@ -8,7 +8,7 @@
             style="padding: 37px 20px 19px; background-color: #eceeef"
           >
             <h1 class="text-center warm-gray">LOGIN</h1>
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="login">
               <div class="mb-4">
                 <label for="email" class="form-label">Email address</label>
                 <input
@@ -30,19 +30,20 @@
               <div class="row">
                 <div class="col">
                   <button
-                    @click="login"
+                    :disabled="loading"
                     type="submit"
                     class="btn btn-primary btn-block mt-4"
                   >
-                    Login
+                    <span v-if="loading">Logging in...</span>
+                    <span v-else>Login</span>
                   </button>
                 </div>
               </div>
             </form>
             <div class="mt-3 text-start">
               <p>
-                Don’t have account?
-                <span class="font-weight-bold">Register Now</span>
+                Don’t have an account?
+                <router-link to="/register" class="font-weight-bold text-dark">Register Now</router-link>
               </p>
             </div>
           </div>
@@ -51,6 +52,47 @@
     </div>
   </div>
 </template>
+
+<script>
+import { defineComponent, ref } from "vue";
+import { useAuthStore } from "../stores/auth";
+import router from "../router/index";
+import { loginUser } from "../services/authService";
+
+export default defineComponent({
+  setup() {
+    const authStore = useAuthStore();
+    const email = ref("");
+    const password = ref("");
+    const loading = ref(false);
+
+    const login = async () => {
+      try {
+        loading.value = true; 
+        const token = await loginUser(email.value, password.value);
+        if (token) {
+          authStore.login();
+          router.push("/allPosts");
+        } else {
+          console.error("Login failed: Token not provided");
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
+      } finally {
+        loading.value = false; 
+      }
+    };
+
+    return {
+      email,
+      password,
+      login,
+      loading,
+    };
+  },
+});
+</script>
+
 <style>
 .warm-gray {
   color: #707070;
@@ -66,25 +108,3 @@
   }
 }
 </style>
-
-<script>
-import { defineComponent } from "vue";
-import { useAuthStore } from "../stores/auth";
-import  router  from "../router/index";
-
-export default defineComponent({
-  setup() {
-    const authStore = useAuthStore();
-
-    const login = () => {
-      //  login logic here
-      authStore.login();
-      router.push("/allPosts");
-    };
-
-    return {
-      login,
-    };
-  },
-});
-</script>

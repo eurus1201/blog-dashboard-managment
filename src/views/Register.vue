@@ -8,14 +8,14 @@
             style="padding: 37px 20px 19px; background-color: #eceeef"
           >
             <h1 class="text-center warm-gray">Register</h1>
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="register">
               <div class="mb-4">
-                <label for="user" class="form-label"> User</label>
+                <label for="username" class="form-label">User</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="user"
-                  v-model="user"
+                  id="username"
+                  v-model="username"
                 />
               </div>
               <div class="mb-4">
@@ -38,15 +38,23 @@
               </div>
               <div class="row">
                 <div class="col">
-                  <button type="submit" class="btn btn-primary btn-block mt-4">
-                    Submit
+                  <button
+                    :disabled="loading"
+                    type="submit"
+                    class="btn btn-primary btn-block mt-4"
+                  >
+                    <span v-if="loading">Logging in...</span>
+                    <span v-else>Register</span>
                   </button>
                 </div>
               </div>
             </form>
             <div class="mt-3 text-start">
               <p>
-                Already Registered? <span class="font-weight-bold">Login</span>
+                Already Registered?
+                <router-link to="/" class="font-weight-bold text-dark"
+                  >Login</router-link
+                >
               </p>
             </div>
           </div>
@@ -55,6 +63,50 @@
     </div>
   </div>
 </template>
+
+<script>
+import { defineComponent, ref } from "vue";
+import { registerUser } from "../services/authService";
+import { useAuthStore } from "../stores/auth";
+import router from "../router/index";
+
+export default defineComponent({
+  setup() {
+    const authStore = useAuthStore();
+    const email = ref("");
+    const password = ref("");
+    const username = ref("");
+    const loading = ref(false);
+    const register = async () => {
+      try {
+        loading.value = true;
+        const token = await registerUser(
+          email.value,
+          password.value,
+          username.value
+        );
+        if (token) {
+          authStore.login();
+          router.push("/allPosts");
+        } else {
+          console.error("Login failed: Token not provided");
+        }
+      } catch (error) {
+        console.error("Error during login:", error);
+      } finally {
+        loading.value = false;
+      }
+    };
+    return {
+      email,
+      password,
+      username,
+      register,
+      loading,
+    };
+  },
+});
+</script>
 
 <style>
 .warm-gray {
@@ -71,20 +123,3 @@
   }
 }
 </style>
-
-<script>
-export default {
-  data() {
-    return {
-      user: "",
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    handleSubmit() {
-      // Handle registration logic here
-    },
-  },
-};
-</script>

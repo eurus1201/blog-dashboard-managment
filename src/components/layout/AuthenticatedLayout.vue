@@ -3,18 +3,18 @@
     <header>
       <NavbarComponent />
     </header>
-  </div>
-  <main role="main">
-    <article class="d-flex">
-      <Sidebar />
-      <article class="content container-fluid">
+    <main role="main">
+      <article class="d-flex">
+        <Sidebar />
+        <article class="content container-fluid">
           <section class="main-content">
-              <router-view></router-view>
-            </section>
+            <router-view></router-view>
+          </section>
         </article>
-    </article>
-  </main>
-</template>
+      </article>
+    </main>
+  </div>
+  </template>
 
 <script>
 import NavbarComponent from "@/components/NavbarComponent.vue";
