@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="w-100">
     <!-- Conditional rendering based on authentication status -->
     <template v-if="authStore.isLoggedIn">
       <!-- Render the authenticated layout -->

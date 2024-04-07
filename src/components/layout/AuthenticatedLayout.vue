@@ -1,20 +1,14 @@
 <template>
-  <div class="authenticated-layout">
+  <div class="authenticated-layout container w-100">
     <header>
       <NavbarComponent />
     </header>
-    <main role="main">
-      <article class="d-flex">
-        <Sidebar />
-        <article class="content container-fluid">
-          <section class="main-content">
-            <router-view></router-view>
-          </section>
-        </article>
-      </article>
+    <main role="main" class="w-100">
+      <Sidebar />
+      <router-view></router-view>
     </main>
   </div>
-  </template>
+</template>
 
 <script>
 import NavbarComponent from "@/components/NavbarComponent.vue";
