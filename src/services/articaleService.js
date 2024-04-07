@@ -15,17 +15,6 @@ const showToastMessage = (message, status) => {
   document.body.appendChild(toast.$el);
 };
 
-export const getAllArticles = async () => {
-  try {
-    const data = await withAuth("get", `${BASE_URL}/articles`);
-    return data.articles;
-  } catch (error) {
-    console.error("Error fetching articles:", error);
-    showToastMessage("Error fetching articles.", "Error");
-    return [];
-  }
-};
-
 export const deleteArticle = async (slug) => {
   try {
     await withAuth("delete", `${BASE_URL}/articles/${slug}`);
@@ -48,9 +37,10 @@ export const createNewArticle = async (title, description, body, tagList) => {
       },
     };
 
-    await withAuth("post", `${BASE_URL}/articles`, articleData);
-    showToastMessage("Well done! Article created successfully.", "Success");
-    router.push("/allPosts");
+    await withAuth("post", `${BASE_URL}/articles`, articleData).then(()=>{
+      showToastMessage("Well done! Article created successfully.", "Success");
+      router.push("/allPosts");
+    })
   } catch (error) {
     console.error("Error creating article:", error);
     showToastMessage("Error creating article.", "Error");
@@ -71,5 +61,43 @@ export const editArticle = async (slug, updatedBody) => {
   } catch (error) {
     console.error("Error updating article:", error);
     throw error;
+  }
+};
+
+export const getAllTags = async () => {
+  try {
+    const data = await withAuth("get", `${BASE_URL}/tags`);
+    return data.tags;
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    showToastMessage("Error fetching articles.", "Error");
+    return [];
+  }
+};
+
+export const getAllArticlesFirstPage = async () => {
+  try {
+    const data = await withAuth("get", `${BASE_URL}/articles`);
+    return {
+      articles: data.articles,
+      articlesCount: data.articlesCount
+    };
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    showToastMessage("Error fetching articles.", "Error");
+    return [];
+  }
+};
+export const getAllArticles = async (page) => {
+  try {
+    const data = await withAuth("get", `${BASE_URL}/articles/page/${page}`);
+    return {
+      articles: data.articles,
+      articlesCount: data.articlesCount
+    };
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    showToastMessage("Error fetching articles.", "Error");
+    return { articles: [], articlesCount: 0 };
   }
 };

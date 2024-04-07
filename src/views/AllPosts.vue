@@ -36,7 +36,7 @@
               >
                 <option value="" disabled selected>-</option>
                 <option value="edit">Edit</option>
-                <option value="delete" >Delete</option>
+                <option value="delete">Delete</option>
               </select>
             </td>
           </tr>
@@ -44,36 +44,15 @@
       </table>
     </div>
 
-    <nav aria-label="Page navigation">
-      <ul class="pagination justify-content-end">
-        <li class="page-item" :class="{ disabled: currentPage === 1 }">
-          <router-link
-            :to="getPaginationPath(currentPage - 1)"
-            class="page-link"
-            tabindex="-1"
-            :aria-disabled="currentPage === 1"
-            >Previous</router-link
+    <div class="d-flex flex-row-reverse justify-content-center m-2">
+      <div>
+        <button @click="prevPage" :disabled="currentPage <= 1"><</button>
+        <button v-for="pageNumber in totalPages" :key="pageNumber" @click="goToPage(pageNumber)" :class="{ active: pageNumber === currentPage }">{{ pageNumber }}</button>
+        <button @click="nextPage" :disabled="currentPage >= totalPages">
           >
-        </li>
-        <li
-          class="page-item"
-          v-for="pageNumber in totalPages"
-          :key="pageNumber"
-          :class="{ active: pageNumber === currentPage }"
-        >
-          <router-link :to="getPaginationPath(pageNumber)" class="page-link">{{
-            pageNumber
-          }}</router-link>
-        </li>
-        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-          <router-link
-            :to="getPaginationPath(currentPage + 1)"
-            class="page-link"
-            >Next</router-link
-          >
-        </li>
-      </ul>
-    </nav>
+        </button>
+      </div>
+    </div>
 
     <!-- Modal for delete confirmation -->
     <DeleteModal
@@ -86,9 +65,12 @@
 
 <script>
 import { ref, onMounted, computed } from "vue";
-import { getAllArticles, deleteArticle } from "@/services/articaleService";
+import {
+  deleteArticle,
+  getAllArticlesFirstPage,
+  getAllArticles,
+} from "@/services/articaleService";
 import { useRoute } from "vue-router";
-import router from "@/router";
 import DeleteModal from "@/components/DeleteModal.vue";
 
 export default {
@@ -96,32 +78,56 @@ export default {
   setup() {
     const route = useRoute();
     const articles = ref([]);
+    const articlesCount = ref(0);
     const currentPage = ref(1);
     const deleteTargetSlug = ref(null);
     const deleteModalVisible = ref(false);
+    const pageSize = 10;
 
     onMounted(async () => {
-      await loadArticles();
+      await loadArticles(currentPage.value);
     });
-
-    const loadArticles = async () => {
-      const page = Number(route.params.page) || 1;
-      articles.value = await getAllArticles(page);
+    const loadArticles = async (page) => {
+      if (page === 1) {
+        const {
+          articles: fetchedArticles,
+          articlesCount: fetchedArticlesCount,
+        } = await getAllArticlesFirstPage();
+        articles.value = fetchedArticles;
+        articlesCount.value = fetchedArticlesCount;
+      } else {
+        const {
+          articles: fetchedArticles,
+          articlesCount: fetchedArticlesCount,
+        } = await getAllArticles(page);
+        articles.value = fetchedArticles;
+        articlesCount.value = fetchedArticlesCount;
+      }
       currentPage.value = page;
     };
+    const nextPage = async () => {
+      await loadArticles(currentPage.value + 1);
+    };
+
+    const prevPage = async () => {
+      if (currentPage.value > 1) {
+        await loadArticles(currentPage.value - 1);
+      }
+    };
+
     const handleActionChange = (article, action) => {
       if (action === "delete") {
-        console.log('delete called')
+        console.log("delete called");
         deleteTargetSlug.value = article.slug;
         deleteModalVisible.value = true;
-        console.log(deleteModalVisible.value,'set')
+        console.log(deleteModalVisible.value, "set");
       } else if (action === "edit") {
         router.push(`/articles/edit/${article.slug}`);
       }
     };
     const deleteConfirmed = async () => {
       try {
-        console.log('call api')
+        console.log("call api");
         await deleteArticle(deleteTargetSlug.value);
         await loadArticles();
         deleteModalVisible.value = false;
@@ -132,26 +138,24 @@ export default {
     const closeModal = () => {
       deleteModalVisible.value = false;
     };
-    const totalPages = computed(() => {
-      return Math.ceil(articles.value.length / 10);
-    });
-
-    const getPaginationPath = (page) => {
-      if (page === 1) {
-        return "/articles";
-      } else {
-        return `/articles/page/${page}`;
+    const goToPage = async (page) => {
+      if (page !== currentPage.value) {
+        await loadArticles(page);
       }
     };
+
+    const totalPages = Math.ceil(articlesCount.value / pageSize);
+
     return {
       articles,
+      articlesCount,
       currentPage,
-      totalPages,
-      getPaginationPath,
+      nextPage,
+      prevPage,
       handleActionChange,
       deleteConfirmed,
       closeModal,
-      deleteModalVisible
+      deleteModalVisible,
     };
   },
 };
