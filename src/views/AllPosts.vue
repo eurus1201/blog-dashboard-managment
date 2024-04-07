@@ -47,8 +47,18 @@
     <div class="d-flex flex-row-reverse justify-content-center m-2">
       <div>
         <button @click="prevPage" :disabled="currentPage <= 1"><</button>
-        <button v-for="pageNumber in totalPages" :key="pageNumber" @click="goToPage(pageNumber)" :class="{ active: pageNumber === currentPage }">{{ pageNumber }}</button>
-        <button @click="nextPage" :disabled="currentPage >= totalPages">
+        <button
+          v-for="pageNumber in Math.ceil(articlesCount / 10)"
+          :key="pageNumber"
+          :class="{ active: pageNumber === currentPage }"
+        >
+          {{ pageNumber }}
+        </button>
+
+        <button
+          @click="nextPage"
+          :disabled="currentPage >= Math.ceil(articlesCount.value / pageSize)"
+        >
           >
         </button>
       </div>
@@ -82,7 +92,6 @@ export default {
     const currentPage = ref(1);
     const deleteTargetSlug = ref(null);
     const deleteModalVisible = ref(false);
-    const pageSize = 10;
 
     onMounted(async () => {
       await loadArticles(currentPage.value);
@@ -138,13 +147,6 @@ export default {
     const closeModal = () => {
       deleteModalVisible.value = false;
     };
-    const goToPage = async (page) => {
-      if (page !== currentPage.value) {
-        await loadArticles(page);
-      }
-    };
-
-    const totalPages = Math.ceil(articlesCount.value / pageSize);
 
     return {
       articles,
