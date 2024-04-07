@@ -76,50 +76,11 @@
     </nav>
 
     <!-- Modal for delete confirmation -->
-    <div
+    <DeleteModal
       v-if="deleteModalVisible"
-      class="modal fade"
-      id="deleteModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="deleteModalLabel"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            Are you sure you want to delete this article?
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-              @click="closeModal"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              @click="deleteConfirmed"
-            >
-              Delete
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+      @close="closeModal"
+      @confirm="deleteConfirmed"
+    />
   </div>
 </template>
 
@@ -128,6 +89,7 @@ import { ref, onMounted, computed } from "vue";
 import { getAllArticles, deleteArticle } from "@/services/articaleService";
 import { useRoute } from "vue-router";
 import router from "@/router";
+import DeleteModal from "@/components/DeleteModal.vue";
 
 export default {
   name: "AllPosts",
@@ -151,11 +113,6 @@ export default {
       if (action === "delete") {
         deleteTargetSlug.value = article.slug;
         deleteModalVisible.value = true;
-        const deleteModal = document.getElementById("deleteModal");
-        if (deleteModal) {
-          deleteModal.classList.add("show");
-          deleteModal.style.display = "block";
-        }
       } else if (action === "edit") {
         router.push(`/articles/edit/${article.slug}`);
       }
@@ -173,7 +130,7 @@ export default {
       deleteModalVisible.value = false;
     };
     const totalPages = computed(() => {
-      return Math.ceil(articles.value.length / 10); // Assuming 10 articles per page
+      return Math.ceil(articles.value.length / 10);
     });
 
     const getPaginationPath = (page) => {
