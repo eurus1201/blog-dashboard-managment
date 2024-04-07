@@ -1,5 +1,5 @@
 <template>
-    <div class="container mt-4">
+    <div class="container-fluid mt-4">
       <form @submit.prevent="submitForm">
         <!-- Title -->
         <div class="form-group">

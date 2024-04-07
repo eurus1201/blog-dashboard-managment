@@ -14,19 +14,16 @@
 	src: local('HelveticaNeue-CondensedBold'), local('HelveticaNeue-CondensedBold'), url('../assets/helvetica-neue-5/HelveticaNeue-CondensedBold.woff') format('woff'), url('../assets/helvetica-neue-5/HelveticaNeue-CondensedBold.ttf') format('truetype');
 }
 body{
-  height: 100vh;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
   font-family: 'HelveticaNeue','HelveticaNeueRegular', Arial, sans-serif;
 }
 #app {
-  /* max-width: 1280px; */
   margin: 0 auto;
   padding: 2rem;
   font-weight: normal;
 }
-
 
 @media (hover: hover) {
   a:hover {

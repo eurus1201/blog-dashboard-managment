@@ -30,6 +30,7 @@ export default {
 <style scoped>
 .authenticated-layout {
   display: flex;
+  margin-top: 40px;
 }
 
 .main-content {

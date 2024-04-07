@@ -72,6 +72,7 @@ export default defineComponent({
         const token = await loginUser(email.value, password.value);
         if (token) {
           authStore.login();
+          authStore.setToken(token);
           router.push("/allPosts");
         } else {
           console.error("Login failed: Token not provided");
