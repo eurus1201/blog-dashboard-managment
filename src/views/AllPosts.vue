@@ -34,9 +34,9 @@
                 class="form-select btn-primary"
                 @change="handleActionChange(article, $event.target.value)"
               >
-                <option value="" disabled selected>Select Action</option>
+                <option value="" disabled selected>-</option>
                 <option value="edit">Edit</option>
-                <option value="delete">Delete</option>
+                <option value="delete" >Delete</option>
               </select>
             </td>
           </tr>
@@ -111,14 +111,17 @@ export default {
     };
     const handleActionChange = (article, action) => {
       if (action === "delete") {
+        console.log('delete called')
         deleteTargetSlug.value = article.slug;
         deleteModalVisible.value = true;
+        console.log(deleteModalVisible.value,'set')
       } else if (action === "edit") {
         router.push(`/articles/edit/${article.slug}`);
       }
     };
     const deleteConfirmed = async () => {
       try {
+        console.log('call api')
         await deleteArticle(deleteTargetSlug.value);
         await loadArticles();
         deleteModalVisible.value = false;
@@ -148,6 +151,7 @@ export default {
       handleActionChange,
       deleteConfirmed,
       closeModal,
+      deleteModalVisible
     };
   },
 };

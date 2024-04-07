@@ -33,6 +33,4 @@
     }
   }
   </script>
-  
-  <style></style>
-  
+    
