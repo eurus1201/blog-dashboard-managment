@@ -32,11 +32,11 @@
             <td>
               <select
                 class="form-select btn-primary"
-                @change="handleActionChange(article)"
+                @change="handleActionChange(article, $event.target.value)"
               >
                 <option value="" disabled selected>Select Action</option>
-                <option value="edit" >Edit</option>
-                <option value="delete" >Delete</option>
+                <option value="edit">Edit</option>
+                <option value="delete">Delete</option>
               </select>
             </td>
           </tr>
@@ -74,16 +74,60 @@
         </li>
       </ul>
     </nav>
-    <b-modal ref="deleteModal" title="Confirm Delete" @ok="deleteConfirmed">
-      Are you sure you want to delete this article?
-    </b-modal>
+
+    <!-- Modal for delete confirmation -->
+    <div
+      v-if="deleteModalVisible"
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="deleteModalLabel"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this article?
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+              @click="closeModal"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              @click="deleteConfirmed"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, onMounted, computed } from "vue";
-import { getAllArticles } from "@/services/articaleService";
+import { getAllArticles, deleteArticle } from "@/services/articaleService";
 import { useRoute } from "vue-router";
+import router from "@/router";
 
 export default {
   name: "AllPosts",
@@ -91,6 +135,8 @@ export default {
     const route = useRoute();
     const articles = ref([]);
     const currentPage = ref(1);
+    const deleteTargetSlug = ref(null);
+    const deleteModalVisible = ref(false);
 
     onMounted(async () => {
       await loadArticles();
@@ -101,7 +147,31 @@ export default {
       articles.value = await getAllArticles(page);
       currentPage.value = page;
     };
-
+    const handleActionChange = (article, action) => {
+      if (action === "delete") {
+        deleteTargetSlug.value = article.slug;
+        deleteModalVisible.value = true;
+        const deleteModal = document.getElementById("deleteModal");
+        if (deleteModal) {
+          deleteModal.classList.add("show");
+          deleteModal.style.display = "block";
+        }
+      } else if (action === "edit") {
+        router.push(`/articles/edit/${article.slug}`);
+      }
+    };
+    const deleteConfirmed = async () => {
+      try {
+        await deleteArticle(deleteTargetSlug.value);
+        await loadArticles();
+        deleteModalVisible.value = false;
+      } catch (error) {
+        console.error("Error deleting article:", error);
+      }
+    };
+    const closeModal = () => {
+      deleteModalVisible.value = false;
+    };
     const totalPages = computed(() => {
       return Math.ceil(articles.value.length / 10); // Assuming 10 articles per page
     });
@@ -113,25 +183,14 @@ export default {
         return `/articles/page/${page}`;
       }
     };
-    const deleteArticleById = async (articleId) => {
-      try {
-        await deleteArticle(articleId);
-        await loadArticles();
-      } catch (error) {
-        console.error("Error deleting article:", error);
-      }
-    };
-    const editArticle = (articleId) => {
-      // Logic for editing an article
-      // Redirect or show modal for editing the article
-    };
     return {
       articles,
       currentPage,
       totalPages,
       getPaginationPath,
-      deleteArticleById,
-      editArticle,
+      handleActionChange,
+      deleteConfirmed,
+      closeModal,
     };
   },
 };
