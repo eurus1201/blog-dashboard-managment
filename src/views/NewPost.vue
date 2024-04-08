@@ -47,15 +47,6 @@
             <!-- Tags -->
             <div class="form-group">
               <label>Tags</label>
-              <div v-for="(tag, index) in tags" :key="index">
-                <input
-                  type="checkbox"
-                  :id="'tag_' + index"
-                  :value="tag"
-                  v-model="selectedTags"
-                />
-                <label class="p-1" :for="'tag_' + index">{{ tag }}</label>
-              </div>
               <div class="input-group mt-2">
                 <input
                   type="text"
@@ -72,6 +63,15 @@
                     Add
                   </button>
                 </div>
+              </div>
+              <div v-for="(tag, index) in tags" :key="index">
+                <input
+                  type="checkbox"
+                  :id="'tag_' + index"
+                  :value="tag"
+                  v-model="selectedTags"
+                />
+                <label class="p-1" :for="'tag_' + index">{{ tag }}</label>
               </div>
             </div>
           </div>
@@ -90,83 +90,81 @@
     </div>
   </div>
 </template>
-
 <script>
-import { ref } from "vue";
 import { getAllTags, createNewArticle } from "@/services/articaleService";
 import Toast from "@/components/Toast.vue";
-import router from "@/router";
+import { RouterLink, useRoute } from "vue-router";
+import { ref ,createApp} from "vue"; 
 
-const showToastMessage = (message, status) => {
-  const toast = new Toast({
-    propsData: {
-      message,
-      status,
-    },
-  });
-  toast.$mount();
-  document.body.appendChild(toast.$el);
-};
 
 export default {
   name: "NewArticle",
-  data() {
-    return {
-      post: {
-        title: "",
-        tags: [],
-        description: "",
-        body: "",
-      },
-      isLoading: false,
+  setup() {
+    const route = useRoute(); // Access route using useRoute hook
+    const post = ref({
+      title: "",
       tags: [],
-      selectedTags: [],
-      newTag: "",
-    };
-  },
-  methods: {
-    async submitForm() {
-      this.isLoading = true;
+      description: "",
+      body: "",
+    });
+    const isLoading = ref(false);
+    const tags = ref([]);
+    const selectedTags = ref([]);
+    const newTag = ref("");
+    
+    const submitForm = async () => {
+      isLoading.value = true;
       try {
         await createNewArticle(
-          this.post.title,
-          this.post.description,
-          this.post.body,
-          this.selectedTags
+          post.value.title,
+          post.value.description,
+          post.value.body,
+          selectedTags.value
         );
-        this.resetForm();
-        showToastMessage("Article created successfully.", "Success");
-        router.push("/allPosts");
+        router.push({ name: 'AllPosts' }); 
+        resetForm();
       } catch (error) {
-        showToastMessage(error, "error");
         console.error("Error creating article:", error);
       } finally {
-        this.isLoading = false;
+        isLoading.value = false;
       }
-    },
-    async loadTags() {
+    };
+
+    const loadTags = async () => {
       try {
-        this.tags = await getAllTags();
+        tags.value = await getAllTags();
       } catch (error) {
         console.error("Error fetching tags:", error);
       }
-    },
-    addNewTag() {
-      if (this.newTag.trim() !== "") {
-        this.selectedTags.push(this.newTag.trim());
-        this.newTag = "";
+    };
+
+    const addNewTag = () => {
+      if (newTag.value.trim() !== "") {
+        selectedTags.value.push(newTag.value.trim());
+        newTag.value = "";
       }
-    },
-    resetForm() {
-      this.post.title = "";
-      this.selectedTags = [];
-      this.newTag = "";
-      this.post.description = "";
-      this.post.body = "";
-    },
-  },
-  mounted() {
-    this.loadTags();
+    };
+
+    const resetForm = () => {
+      post.value.title = "";
+      selectedTags.value = [];
+      newTag.value = "";
+      post.value.description = "";
+      post.value.body = "";
+    };
+
+    loadTags(); // Call loadTags when component is mounted
+
+    // Return variables and methods for template to access
+    return {
+      post,
+      isLoading,
+      tags,
+      selectedTags,
+      newTag,
+      submitForm,
+      addNewTag,
+    };
   },
 };
 </script>

@@ -4,24 +4,15 @@ import router from "@/router";
 
 const BASE_URL = "https://api.realworld.io/api";
 
-const showToastMessage = (message, status) => {
-  const toast = new Toast({
-    propsData: {
-      message,
-      status,
-    },
-  });
-  toast.$mount();
-  document.body.appendChild(toast.$el);
-};
+
 
 export const deleteArticle = async (slug) => {
   try {
     await withAuth("delete", `${BASE_URL}/articles/${slug}`);
-    showToastMessage("Article deleted successfully.", "Success");
+    console.log("Article deleted successfully.", "Success");
   } catch (error) {
     console.error("Error deleting article:", error);
-    showToastMessage("Error deleting article.", "Error");
+    console.log("Error deleting article.", "Error");
     throw error;
   }
 };
@@ -38,12 +29,12 @@ export const createNewArticle = async (title, description, body, tagList) => {
     };
 
     await withAuth("post", `${BASE_URL}/articles`, articleData).then(()=>{
-      showToastMessage("Well done! Article created successfully.", "Success");
+      console.log("Well done! Article created successfully.", "Success");
       router.push("/allPosts");
     })
   } catch (error) {
     console.error("Error creating article:", error);
-    showToastMessage("Error creating article.", "Error");
+    console.log("Error creating article.", "Error");
     throw error;
   }
 };
@@ -56,7 +47,7 @@ export const editArticle = async (slug, updatedBody) => {
       },
     };
     await withAuth("put", `${BASE_URL}/articles/${slug}`, articleData);
-    showToastMessage("Well done! Article updated successfully.", "Success");
+    console.log("Well done! Article updated successfully.", "Success");
     router.push("/allPosts");
   } catch (error) {
     console.error("Error updating article:", error);
@@ -70,7 +61,7 @@ export const getAllTags = async () => {
     return data.tags;
   } catch (error) {
     console.error("Error fetching articles:", error);
-    showToastMessage("Error fetching articles.", "Error");
+    console.log("Error fetching articles.", "Error");
     return [];
   }
 };
@@ -84,7 +75,7 @@ export const getAllArticlesFirstPage = async () => {
     };
   } catch (error) {
     console.error("Error fetching articles:", error);
-    showToastMessage("Error fetching articles.", "Error");
+    console.log("Error fetching articles.", "Error");
     return [];
   }
 };
@@ -97,7 +88,7 @@ export const getAllArticles = async (page) => {
     };
   } catch (error) {
     console.error("Error fetching articles:", error);
-    showToastMessage("Error fetching articles.", "Error");
+    console.log("Error fetching articles.", "Error");
     return { articles: [], articlesCount: 0 };
   }
 };
