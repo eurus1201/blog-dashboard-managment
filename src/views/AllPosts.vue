@@ -43,8 +43,21 @@
                     ...
                   </button>
                   <div class="dropdown-menu">
-                    <div class="dropdown-item">Delete</div>
-                    <div class="dropdown-item">Edit</div>
+                    <div
+                      type="button"
+                      class="dropdown-item"
+                      data-toggle="modal"
+                      data-target="#deleteModal"
+                      @click="setDeleteTarget(article.slug)"
+                    >
+                      Delete
+                    </div>
+                    <div
+                      class="dropdown-item"
+                      @click="navigateToEdit(article.slug)"
+                    >
+                      Edit
+                    </div>
                   </div>
                 </div>
               </div>
@@ -74,6 +87,51 @@
       </div>
     </div>
   </div>
+  <div>
+    <!-- Delete Modal -->
+    <div
+      class="modal fade"
+      id="deleteModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="deleteModalLabel"
+      aria-hidden="true"
+      :class="{ show: deleteModalVisible }"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete Article</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">Are you sure to delete this article?</div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-dark"
+              data-dismiss="modal"
+            >
+              No
+            </button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              @click="deleteConfirmed"
+            >
+              Yes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -96,6 +154,7 @@ export default {
     const articlesCount = ref(0);
     const currentPage = ref(1);
     const deleteTargetSlug = ref(null);
+    const deleteModalVisible = ref(false);
 
     onMounted(async () => {
       await loadArticles(currentPage.value);
@@ -128,23 +187,34 @@ export default {
         await loadArticles(currentPage.value - 1);
       }
     };
-
-    const handleActionChange = (article, action) => {
-      if (action === "delete") {
-        console.log("delete called");
-        deleteTargetSlug.value = article.slug;
-      } else if (action === "edit") {
-        router.push(`/articles/edit/${article.slug}`);
+    const navigateToEdit = (slug) => {
+      router.push(`/articles/edit/${slug}`);
+    };
+    const setDeleteTarget = (slug) => {
+      deleteTargetSlug.value = slug;
+      deleteModalVisible.value = true;
+    };
+    const deleteConfirmed = async () => {
+      try {
+        await deleteArticle(deleteTargetSlug.value);
+        await loadArticles(1);
+        deleteTargetSlug.value = null;
+        deleteModalVisible.value = false;
+      } catch (error) {
+        console.error("Error deleting article:", error);
       }
     };
-
     return {
       articles,
       articlesCount,
       currentPage,
       nextPage,
       prevPage,
-      handleActionChange,
+      deleteTargetSlug,
+      setDeleteTarget,
+      navigateToEdit,
+      deleteConfirmed,
+      deleteModalVisible,
     };
   },
 };
