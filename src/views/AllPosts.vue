@@ -10,8 +10,7 @@
             <th scope="col">Author</th>
             <th scope="col">Tags</th>
             <th scope="col">Excerpt</th>
-            <th scope="col">Created</th>
-            <th scope="col">Actions</th>
+            <th scope="col" class="text-end">Created</th>
           </tr>
         </thead>
         <tbody>
@@ -28,16 +27,27 @@
               >
             </td>
             <td>{{ article.description }}</td>
-            <td>{{ article.createdAt }}</td>
             <td>
-              <select
-                class="form-select btn-primary"
-                @change="handleActionChange(article, $event.target.value)"
-              >
-                <option value="" disabled selected>-</option>
-                <option value="edit">Edit</option>
-                <option value="delete">Delete</option>
-              </select>
+              <div class="d-flex align-items-center justify-content-between">
+                <div>
+                  {{ moment(article.createdAt).format("MMM DD, YYYY") }}
+                </div>
+                <div class="btn-group">
+                  <button
+                    type="button"
+                    class="btn btn-info dropdown-toggle"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    ...
+                  </button>
+                  <div class="dropdown-menu">
+                    <div class="dropdown-item">Delete</div>
+                    <div class="dropdown-item">Edit</div>
+                  </div>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -63,38 +73,34 @@
         </button>
       </div>
     </div>
-
-    <!-- Modal for delete confirmation -->
-    <DeleteModal
-      v-if="deleteModalVisible"
-      @close="closeModal"
-      @confirm="deleteConfirmed"
-    />
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import {
   deleteArticle,
   getAllArticlesFirstPage,
   getAllArticles,
 } from "@/services/articaleService";
-import DeleteModal from "@/components/DeleteModal.vue";
 import router from "@/router";
+import moment from "moment";
 
 export default {
   name: "AllPosts",
+  created: function () {
+    this.moment = moment;
+  },
   setup() {
     const articles = ref([]);
     const articlesCount = ref(0);
     const currentPage = ref(1);
     const deleteTargetSlug = ref(null);
-    const deleteModalVisible = ref(false);
 
     onMounted(async () => {
       await loadArticles(currentPage.value);
     });
+
     const loadArticles = async (page) => {
       if (page === 1) {
         const {
@@ -127,24 +133,9 @@ export default {
       if (action === "delete") {
         console.log("delete called");
         deleteTargetSlug.value = article.slug;
-        deleteModalVisible.value = true;
-        console.log(deleteModalVisible.value, "set");
       } else if (action === "edit") {
         router.push(`/articles/edit/${article.slug}`);
       }
-    };
-    const deleteConfirmed = async () => {
-      try {
-        console.log("call api");
-        await deleteArticle(deleteTargetSlug.value);
-        await loadArticles();
-        deleteModalVisible.value = false;
-      } catch (error) {
-        console.error("Error deleting article:", error);
-      }
-    };
-    const closeModal = () => {
-      deleteModalVisible.value = false;
     };
 
     return {
@@ -154,9 +145,6 @@ export default {
       nextPage,
       prevPage,
       handleActionChange,
-      deleteConfirmed,
-      closeModal,
-      deleteModalVisible,
     };
   },
 };
