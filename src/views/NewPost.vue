@@ -89,18 +89,33 @@
       </form>
     </div>
   </div>
+  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <img src="..." class="rounded mr-2" alt="..." />
+      <strong class="mr-auto">Bootstrap</strong>
+      <small>11 mins ago</small>
+      <button
+        type="button"
+        class="ml-2 mb-1 close"
+        data-dismiss="toast"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">Hello, world! This is a toast message.</div>
+  </div>
 </template>
 <script>
 import { getAllTags, createNewArticle } from "@/services/articaleService";
-import Toast from "@/components/Toast.vue";
-import { RouterLink, useRoute } from "vue-router";
-import { ref ,createApp} from "vue"; 
-
+import { ref } from "vue";
+import router from "@/router";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
   name: "NewArticle",
   setup() {
-    const route = useRoute(); // Access route using useRoute hook
     const post = ref({
       title: "",
       tags: [],
@@ -111,7 +126,7 @@ export default {
     const tags = ref([]);
     const selectedTags = ref([]);
     const newTag = ref("");
-    
+
     const submitForm = async () => {
       isLoading.value = true;
       try {
@@ -121,7 +136,13 @@ export default {
           post.value.body,
           selectedTags.value
         );
-        router.push({ name: 'AllPosts' }); 
+        toast("Well Done. Article created successfully. !", {
+          autoClose: 2000,
+          type: "success",
+        });
+        setTimeout(() => {
+          router.push("/allPosts");
+        }, 3000);
         resetForm();
       } catch (error) {
         console.error("Error creating article:", error);
@@ -153,9 +174,8 @@ export default {
       post.value.body = "";
     };
 
-    loadTags(); // Call loadTags when component is mounted
+    loadTags(); 
 
-    // Return variables and methods for template to access
     return {
       post,
       isLoading,

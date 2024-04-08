@@ -1,9 +1,7 @@
 import withAuth from "./withAuth";
-import Toast from "@/components/Toast.vue";
 import router from "@/router";
 
 const BASE_URL = "https://api.realworld.io/api";
-
 
 
 export const deleteArticle = async (slug) => {
@@ -28,10 +26,7 @@ export const createNewArticle = async (title, description, body, tagList) => {
       },
     };
 
-    await withAuth("post", `${BASE_URL}/articles`, articleData).then(()=>{
-      console.log("Well done! Article created successfully.", "Success");
-      router.push("/allPosts");
-    })
+    await withAuth("post", `${BASE_URL}/articles`, articleData)
   } catch (error) {
     console.error("Error creating article:", error);
     console.log("Error creating article.", "Error");

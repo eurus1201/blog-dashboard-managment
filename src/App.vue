@@ -17,6 +17,7 @@ import { defineComponent } from "vue";
 import { useAuthStore } from "./stores/auth";
 import AuthenticatedLayout from "@/components/layout/AuthenticatedLayout.vue";
 import PublicLayout from "@/components/layout/PublicLayout.vue"; 
+import 'vue3-toastify/dist/index.css';
 
 export default defineComponent({
   name: "App",
