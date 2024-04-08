@@ -34,16 +34,18 @@ export const createNewArticle = async (title, description, body, tagList) => {
   }
 };
 
-export const editArticle = async (slug, updatedBody) => {
+export const editArticle = async (slug, updatedBody,updatedTitle,updatedDescription,updatedTagList) => {
   try {
     const articleData = {
       article: {
         body: updatedBody,
+        title : updatedTitle,
+        description : updatedDescription,
+        tagList: updatedTagList,
       },
     };
     await withAuth("put", `${BASE_URL}/articles/${slug}`, articleData);
     console.log("Well done! Article updated successfully.", "Success");
-    router.push("/allPosts");
   } catch (error) {
     console.error("Error updating article:", error);
     throw error;
@@ -85,5 +87,15 @@ export const getAllArticles = async (page) => {
     console.error("Error fetching articles:", error);
     console.log("Error fetching articles.", "Error");
     return { articles: [], articlesCount: 0 };
+  }
+};
+
+export const getArticleWithSlug = async (slug) => {
+  try {
+    const response = await withAuth("get", `${BASE_URL}/articles/${slug}`);
+    return response.article; 
+  } catch (error) {
+    console.error("Error fetching article:", error);
+    throw error;
   }
 };

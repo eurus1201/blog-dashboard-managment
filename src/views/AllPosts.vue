@@ -74,19 +74,18 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import {
   deleteArticle,
   getAllArticlesFirstPage,
   getAllArticles,
 } from "@/services/articaleService";
-import { useRoute } from "vue-router";
 import DeleteModal from "@/components/DeleteModal.vue";
+import router from "@/router";
 
 export default {
   name: "AllPosts",
   setup() {
-    const route = useRoute();
     const articles = ref([]);
     const articlesCount = ref(0);
     const currentPage = ref(1);
