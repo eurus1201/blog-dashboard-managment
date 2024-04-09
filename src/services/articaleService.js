@@ -1,9 +1,6 @@
 import withAuth from "./withAuth";
-import router from "@/router";
-import { toast } from "vue3-toastify";
 
 const BASE_URL = "https://api.realworld.io/api";
-
 
 export const deleteArticle = async (slug) => {
   try {
@@ -27,7 +24,7 @@ export const createNewArticle = async (title, description, body, tagList) => {
       },
     };
 
-    await withAuth("post", `${BASE_URL}/articles`, articleData)
+    await withAuth("post", `${BASE_URL}/articles`, articleData);
   } catch (error) {
     console.error("Error creating article:", error);
     console.log("Error creating article.", "Error");
@@ -35,13 +32,19 @@ export const createNewArticle = async (title, description, body, tagList) => {
   }
 };
 
-export const editArticle = async (slug, updatedBody,updatedTitle,updatedDescription,updatedTagList) => {
+export const editArticle = async (
+  slug,
+  updatedBody,
+  updatedTitle,
+  updatedDescription,
+  updatedTagList
+) => {
   try {
     const articleData = {
       article: {
         body: updatedBody,
-        title : updatedTitle,
-        description : updatedDescription,
+        title: updatedTitle,
+        description: updatedDescription,
         tagList: updatedTagList,
       },
     };
@@ -69,7 +72,7 @@ export const getAllArticlesFirstPage = async () => {
     const data = await withAuth("get", `${BASE_URL}/articles`);
     return {
       articles: data.articles,
-      articlesCount: data.articlesCount
+      articlesCount: data.articlesCount,
     };
   } catch (error) {
     console.error("Error fetching articles:", error);
@@ -82,7 +85,7 @@ export const getAllArticles = async (page) => {
     const data = await withAuth("get", `${BASE_URL}/articles/page/${page}`);
     return {
       articles: data.articles,
-      articlesCount: data.articlesCount
+      articlesCount: data.articlesCount,
     };
   } catch (error) {
     console.error("Error fetching articles:", error);
@@ -94,7 +97,7 @@ export const getAllArticles = async (page) => {
 export const getArticleWithSlug = async (slug) => {
   try {
     const response = await withAuth("get", `${BASE_URL}/articles/${slug}`);
-    return response.article; 
+    return response.article;
   } catch (error) {
     console.error("Error fetching article:", error);
     throw error;
