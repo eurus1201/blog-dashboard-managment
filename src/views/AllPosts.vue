@@ -143,6 +143,8 @@ import {
 } from "@/services/articaleService";
 import router from "@/router";
 import moment from "moment";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default {
   name: "AllPosts",
@@ -198,6 +200,10 @@ export default {
       try {
         await deleteArticle(deleteTargetSlug.value);
         await loadArticles(1);
+        toast("Well Done. Article deleted successfully !", {
+          autoClose: 2000,
+          type: "success",
+        });
         deleteTargetSlug.value = null;
         deleteModalVisible.value = false;
       } catch (error) {

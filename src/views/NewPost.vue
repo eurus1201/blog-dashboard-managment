@@ -89,22 +89,6 @@
       </form>
     </div>
   </div>
-  <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-      <img src="..." class="rounded mr-2" alt="..." />
-      <strong class="mr-auto">Bootstrap</strong>
-      <small>11 mins ago</small>
-      <button
-        type="button"
-        class="ml-2 mb-1 close"
-        data-dismiss="toast"
-        aria-label="Close"
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="toast-body">Hello, world! This is a toast message.</div>
-  </div>
 </template>
 <script>
 import { getAllTags, createNewArticle } from "@/services/articaleService";
@@ -145,6 +129,10 @@ export default {
         }, 3000);
         resetForm();
       } catch (error) {
+        toast(error, {
+          autoClose: 2000,
+          type: "error",
+        });
         console.error("Error creating article:", error);
       } finally {
         isLoading.value = false;

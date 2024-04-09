@@ -174,6 +174,10 @@ export default {
           router.push("/allPosts");
         }, 3000);
       } catch (error) {
+        toast(error, {
+          autoClose: 2000,
+          type: "error",
+        });
         console.error("Error updating article:", error);
       } finally {
         isLoading.value = false;

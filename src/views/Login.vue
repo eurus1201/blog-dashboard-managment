@@ -16,6 +16,7 @@
                   class="form-control"
                   id="email"
                   v-model="email"
+                  required
                 />
               </div>
               <div class="mb-4">
@@ -25,6 +26,7 @@
                   class="form-control"
                   id="password"
                   v-model="password"
+                  required
                 />
               </div>
               <div class="row">
@@ -43,7 +45,9 @@
             <div class="mt-3 text-start">
               <p>
                 Don’t have an account?
-                <router-link to="/register" class="font-weight-bold text-dark">Register Now</router-link>
+                <router-link to="/register" class="font-weight-bold text-dark"
+                  >Register Now</router-link
+                >
               </p>
             </div>
           </div>
@@ -58,6 +62,8 @@ import { defineComponent, ref } from "vue";
 import { useAuthStore } from "../stores/auth";
 import router from "../router/index";
 import { loginUser } from "../services/authService";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 export default defineComponent({
   setup() {
@@ -68,7 +74,7 @@ export default defineComponent({
 
     const login = async () => {
       try {
-        loading.value = true; 
+        loading.value = true;
         const token = await loginUser(email.value, password.value);
         if (token) {
           authStore.login();
@@ -78,9 +84,13 @@ export default defineComponent({
           console.error("Login failed: Token not provided");
         }
       } catch (error) {
+        toast(error, {
+          autoClose: 2000,
+          type: "error",
+        });
         console.error("Error during login:", error);
       } finally {
-        loading.value = false; 
+        loading.value = false;
       }
     };
 
