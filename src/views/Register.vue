@@ -16,6 +16,7 @@
                   class="form-control"
                   id="username"
                   v-model="username"
+                  required
                 />
               </div>
               <div class="mb-4">
@@ -25,6 +26,7 @@
                   class="form-control"
                   id="email"
                   v-model="email"
+                  required
                 />
               </div>
               <div class="mb-4">
@@ -34,6 +36,7 @@
                   class="form-control"
                   id="password"
                   v-model="password"
+                  required
                 />
               </div>
               <div class="row">

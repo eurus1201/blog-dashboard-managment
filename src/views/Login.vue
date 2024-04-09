@@ -84,11 +84,11 @@ export default defineComponent({
           console.error("Login failed: Token not provided");
         }
       } catch (error) {
-        toast(error, {
-          autoClose: 2000,
+        toast('errorLogin failed: Token not provided', {
+          theme: "auto",
           type: "error",
+          dangerouslyHTMLString: true,
         });
-        console.error("Error during login:", error);
       } finally {
         loading.value = false;
       }

@@ -17,6 +17,11 @@ export const registerUser = async (email, password, username) => {
     return token;
   } catch (error) {
     console.error("Registration failed:", error.response.data);
+    toast(error, {
+      theme: "auto",
+      type: "error",
+      dangerouslyHTMLString: true,
+    });
     return null;
   }
 };
@@ -33,7 +38,12 @@ export const loginUser = async (email, password) => {
     useAuthStore().setToken(token);
     return token;
   } catch (error) {
-    console.error("Login failed:", error.response.data);
+    toast('errorLogin failed: Token not provided', {
+      theme: "auto",
+      type: "error",
+      dangerouslyHTMLString: true,
+    });
+    console.error("Login failed :", error);
     return null;
   }
 };

@@ -1,5 +1,6 @@
 import withAuth from "./withAuth";
 import router from "@/router";
+import { toast } from "vue3-toastify";
 
 const BASE_URL = "https://api.realworld.io/api";
 

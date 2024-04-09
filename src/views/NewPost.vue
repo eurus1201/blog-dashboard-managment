@@ -130,8 +130,9 @@ export default {
         resetForm();
       } catch (error) {
         toast(error, {
-          autoClose: 2000,
+          theme: "auto",
           type: "error",
+          dangerouslyHTMLString: true,
         });
         console.error("Error creating article:", error);
       } finally {
@@ -162,7 +163,7 @@ export default {
       post.value.body = "";
     };
 
-    loadTags(); 
+    loadTags();
 
     return {
       post,
