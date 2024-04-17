@@ -63,6 +63,7 @@ import { useAuthStore } from "../stores/auth";
 import router from "../router/index";
 import { loginUser } from "../services/authService";
 import { toast } from "vue3-toastify";
+import { useForm } from 'vee-validate';
 import "vue3-toastify/dist/index.css";
 
 export default defineComponent({
